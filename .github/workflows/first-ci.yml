@@ -6,14 +6,21 @@ on:
       - main
 
 jobs:
-  kubernetes-checking:
+  docker-version:
     runs-on: ubuntu-latest
     steps:
       - name: List files
         run: ls -la
         
-      - name: Show kubectl version
-        run: kubectl --version
-
-      - name: Show nodes info
-        run: kubectl get nodes -o wide
+      - name: Show docker version
+        run: docker --version
+        
+  cloning-repo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: List files
+        run: ls -la
+  
