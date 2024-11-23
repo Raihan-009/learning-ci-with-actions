@@ -1,62 +1,75 @@
-name: Multiple Jobs Lab
+name: Tree Structure Workflow
 on:
   push:
     branches:
       - main
 jobs:
-  # First job: Build
-  build:
-    name: Build Application
+  # First parallel job A
+  job-a:
+    name: Job A
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      
-      - name: Build step
+      - name: Execute Job A
         run: |
-          echo "🏗️ Building the application..."
-          echo "Build completed successfully!"
-  
-  # New independent job: Security Scan
-  security-scan:
-    name: Security Scan
-    needs: build  # Only depends on build job
-    runs-on: ubuntu-latest
-    steps:
-      - name: Run security scan
-        run: |
-          echo "🔒 Running security scan..."
-          echo "Security scan completed!"
-  
-  # Second job: Test
-  test:
-    name: Run Tests
-    needs: build  # Depends on build job
-    runs-on: ubuntu-latest
-    steps:
-      - name: Run tests
-        run: |
-          echo "🧪 Running tests..."
-          echo "All tests passed!"
-  
-  # Third job: Deploy
-  deploy:
-    name: Deploy Application
-    needs: [test, security-scan]  # Now depends on both test and security-scan jobs
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy
-        run: |
-          echo "🚀 Deploying application..."
-          echo "Deployment successful!"
+          echo "Starting Job A (First Level - Left Branch)"
+          echo "Processing Job A tasks..."
+          echo "Job A completed ✅"
 
-  # Fourth job: Notify
-  notify:
-    name: Send Notification
-    needs: deploy  # Depends on deploy job
+  # Second parallel job B
+  job-b:
+    name: Job B
     runs-on: ubuntu-latest
     steps:
-      - name: Send notification
+      - name: Execute Job B
         run: |
-          echo "📧 Sending deployment notification..."
-          echo "Notification sent!"
+          echo "Starting Job B (First Level - Right Branch)"
+          echo "Processing Job B tasks..."
+          echo "Job B completed ✅"
+
+  # Job C depends on both A and B
+  job-c:
+    name: Job C
+    needs: [job-a, job-b]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Execute Job C
+        run: |
+          echo "Starting Job C (Second Level)"
+          echo "Job C waiting for A and B to complete..."
+          echo "Job C completed ✅"
+
+  # Job D starts after C
+  job-d:
+    name: Job D
+    needs: job-c
+    runs-on: ubuntu-latest
+    steps:
+      - name: Execute Job D
+        run: |
+          echo "Starting Job D (Third Level - Left Branch)"
+          echo "Processing Job D tasks..."
+          echo "Job D completed ✅"
+
+  # Job E starts after C (parallel with D)
+  job-e:
+    name: Job E
+    needs: job-c
+    runs-on: ubuntu-latest
+    steps:
+      - name: Execute Job E
+        run: |
+          echo "Starting Job E (Third Level - Right Branch)"
+          echo "Processing Job E tasks..."
+          echo "Job E completed ✅"
+
+  # Final Job F depends on both D and E
+  job-f:
+    name: Job F
+    needs: [job-d, job-e]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Execute Job F
+        run: |
+          echo "Starting Final Job F (Fourth Level)"
+          echo "Job F waiting for D and E to complete..."
+          echo "Workflow completed successfully! 🎉"
