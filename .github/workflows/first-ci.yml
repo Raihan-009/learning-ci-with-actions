@@ -6,11 +6,14 @@ on:
       - main
 
 jobs:
-  docker-version:
+  kubernetes-checking:
     runs-on: ubuntu-latest
     steps:
       - name: List files
         run: ls -la
         
-      - name: Show system info
-        run: docker --version
+      - name: Show kubectl version
+        run: kubectl --version
+
+      - name: Show nodes info
+        run: kubectl get nodes -o wide
