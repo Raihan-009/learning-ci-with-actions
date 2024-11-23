@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - main
-
 jobs:
   # First job: Build
   build:
@@ -17,6 +16,17 @@ jobs:
         run: |
           echo "🏗️ Building the application..."
           echo "Build completed successfully!"
+  
+  # New independent job: Security Scan
+  security-scan:
+    name: Security Scan
+    needs: build  # Only depends on build job
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run security scan
+        run: |
+          echo "🔒 Running security scan..."
+          echo "Security scan completed!"
   
   # Second job: Test
   test:
@@ -32,7 +42,7 @@ jobs:
   # Third job: Deploy
   deploy:
     name: Deploy Application
-    needs: [build, test]  # Depends on both build and test jobs
+    needs: [test, security-scan]  # Now depends on both test and security-scan jobs
     runs-on: ubuntu-latest
     steps:
       - name: Deploy
